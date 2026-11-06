@@ -17,9 +17,18 @@ One product per illustrated product, under that client:
   (today usually `illustration-demo`).
 - **Coherent connection:** the client's Spark connection. Credentials stay in
   the platform.
-- **Endpoints:** one per role the manifest's `endpointRoles` declares. The
-  primary illustration endpoint uses the role `pdf`. Release activation checks
-  that every declared role exists on every linked product.
+- **Endpoints:** one per role the manifest's `endpointRoles` declares, and
+  release activation checks that each exists on every linked product. The
+  roles map to the admin's product fields like this:
+
+  | Manifest role | Admin field | Used when the UI calls |
+  | --- | --- | --- |
+  | `primary` (also `default`, `illustration`, `calculation`) | PDF Endpoint URL (required) | `runtime.calculate(slug, inputs)` with no `endpoint` |
+  | `pdf` (also `secondary`) | Calculation Endpoint URL (optional) | `{ endpoint: "pdf" }` |
+  | `rates` | Rates Endpoint URL (optional) | `{ endpoint: "rates" }` |
+
+  Most UIs declare only `primary`. Declare another role only if the UI calls
+  it.
 
 ## 3. Variants
 

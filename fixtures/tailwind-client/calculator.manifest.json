@@ -10,7 +10,7 @@
     "type": "illustrata-products",
     "productBinding": "multiple",
     "productContractKeys": ["fixture-products"],
-    "endpointRoles": ["pdf"],
+    "endpointRoles": ["primary"],
     "compatibleProductTypes": ["illustration-demo"]
   },
   "deliveryModes": ["javascript", "hosted-tool"],
