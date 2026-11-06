@@ -57,6 +57,9 @@ jobs:
       - name: The scaffold's own checks
         working-directory: ${{ runner.temp }}/acme-ui
         run: |
+          # The builder takes the commit from GITHUB_SHA in Actions; here that is
+          # the SDK's commit, not the scaffold's, so read it from the scaffold's git.
+          unset GITHUB_SHA GITHUB_ACTIONS
           npm run ci
           npx --no-install illustrata-check sync --strict
           npx --no-install illustrata-check release
