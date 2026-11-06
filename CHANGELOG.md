@@ -1,5 +1,13 @@
 # @illustrata/client-sdk
 
+## 0.1.1
+
+- First release published by the `Publish SDK to npm` workflow through npm
+  trusted publishing (OIDC, no token), with provenance. No code changes from
+  0.1.0.
+- The publish workflow skips a version that is already on npm, so pushing the
+  tag of a hand-published version is harmless.
+
 ## 0.1.0
 
 First release, extracted from the Illustrata calculators repository
