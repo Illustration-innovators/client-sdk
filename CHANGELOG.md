@@ -2,6 +2,10 @@
 
 ## 0.2.0
 
+- `create-client-ui <clientKey>`: writes a new client UI repository (template,
+  example product module, preview, tests, CI with screenshots, release
+  workflow, CODEOWNERS, AGENTS.md with the shared section) pinned to this SDK
+  version. SDK CI scaffolds one and runs its checks on every change.
 - `illustrata-check screenshots`: builds the release and saves a full-page PNG
   per product at phone and desktop width in real Chromium, with every request
   answered locally. Needs the new optional peer dependency `playwright`.

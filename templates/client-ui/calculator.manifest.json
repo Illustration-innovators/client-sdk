@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "runtimeContractVersion": 1,
+  "embedType": "__CLIENT_KEY__--__TOOL__",
+  "clientKey": "__CLIENT_KEY__",
+  "calculatorKey": "__TOOL__",
+  "displayName": "__CLIENT_NAME__ __TOOL_TITLE__",
+  "description": "__CLIENT_NAME__ client UI for Illustrata Link.",
+  "integration": {
+    "type": "illustrata-products",
+    "productBinding": "multiple",
+    "productContractKeys": ["__CLIENT_KEY__-illustration"],
+    "endpointRoles": ["primary"],
+    "compatibleProductTypes": ["illustration-demo"]
+  },
+  "deliveryModes": ["hosted-tool"],
+  "publication": {
+    "independent": false
+  }
+}

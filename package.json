@@ -15,7 +15,8 @@
   "bin": {
     "illustrata-release": "bin/illustrata-release.mjs",
     "illustrata-check": "bin/illustrata-check.mjs",
-    "illustrata-sdk": "bin/illustrata-sdk.mjs"
+    "illustrata-sdk": "bin/illustrata-sdk.mjs",
+    "create-client-ui": "bin/create-client-ui.mjs"
   },
   "exports": {
     "./config": {
@@ -50,6 +51,7 @@
     "dist",
     "src/runtime",
     "src/contract",
+    "templates",
     "docs",
     "README.md",
     "CHANGELOG.md"

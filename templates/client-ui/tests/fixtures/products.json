@@ -1,0 +1,11 @@
+[
+  {
+    "slug": "__CLIENT_KEY__-demo-fia",
+    "name": "Demo Fixed Indexed Annuity",
+    "allowedStates": null,
+    "variants": [
+      { "id": "fia-7", "displayName": "7-year", "sparkProductCode": "FIA7", "kind": "fia-accum", "displayOrder": 1, "allowedStates": null },
+      { "id": "fia-10", "displayName": "10-year", "sparkProductCode": "FIA10", "kind": "fia-accum", "displayOrder": 2, "allowedStates": null }
+    ]
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "name": "@illustration-innovators/__CLIENT_KEY__-ui",
+  "version": "0.0.0",
+  "private": true,
+  "description": "__CLIENT_NAME__: a client UI for Illustrata Link.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.14"
+  },
+  "scripts": {
+    "dev": "vite --config vite.preview.config.ts",
+    "build": "vite build --config vite.lib.config.ts",
+    "build:release": "illustrata-release build",
+    "check-types": "tsc -p tsconfig.json --noEmit",
+    "check:release": "illustrata-check release",
+    "screenshots": "illustrata-check screenshots",
+    "test": "vitest run",
+    "ci": "npm run check-types && illustrata-check boundaries && illustrata-release validate && npm run test && npm run build"
+  },
+  "devDependencies": {
+    "@illustrata/client-sdk": "__SDK_VERSION__",
+    "@tailwindcss/vite": "^4.1.0",
+    "@types/node": "^22.15.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.7.0",
+    "playwright": "^1.48.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^4.1.0",
+    "typescript": "^5.8.3",
+    "vite": "^7.1.0",
+    "vitest": "^3.2.0"
+  }
+}
