@@ -39,8 +39,10 @@ Types: `@illustrata/client-sdk/contract`.
 - `calculate` posts the inputs to the product's endpoint on the platform. The
   platform applies the product's input mappings, calls Spark, maps outputs and,
   for PDF formats, merges PDFs. The UI never sees Spark or its credentials.
-- `endpoint` names a role configured on the product in the portal. A role the
-  manifest does not declare will not be configured.
+- `endpoint` names a role configured on the product in the portal. Without
+  it, the call uses the product's main endpoint (role `primary`, the admin's
+  "PDF Endpoint URL"). A role the manifest does not declare will not be
+  configured. PORTAL_SETUP.md maps roles to admin fields.
 - `workspace` exists only when the tool's access mode supplies it. Today that
   is internal Hosted Tools opened by Illustrata staff (`staff-workspace-v1`).
 
