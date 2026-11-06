@@ -55,6 +55,21 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
       - run: npm install --global npm@11.6.2
-      - run: npm ci --ignore-scripts
-      - run: npm run build
-      - run: npm publish --access public
+      # A version already on npm (for example 0.1.0, published by hand to
+      # create the package) is skipped, so pushing its tag is harmless.
+      - name: Skip if this version is already published
+        id: existing
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          if npm view "@illustrata/client-sdk@$VERSION" version >/dev/null 2>&1; then
+            echo "@illustrata/client-sdk@$VERSION is already on npm; nothing to publish."
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.existing.outputs.published != 'true'
+        run: npm ci --ignore-scripts
+      - if: steps.existing.outputs.published != 'true'
+        run: npm run build
+      - if: steps.existing.outputs.published != 'true'
+        run: npm publish --access public
