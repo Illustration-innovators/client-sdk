@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "types": ["node"]
+  },
+  "include": [
+    "src/config.ts",
+    "src/contract",
+    "src/products",
+    "src/preview",
+    "src/postcss"
+  ]
+}

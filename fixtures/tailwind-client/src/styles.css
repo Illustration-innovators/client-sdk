@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@source "./";
+
+@theme {
+  --color-fixture-accent: var(--illustrata-accent, #0b3d91);
+}

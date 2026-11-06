@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "runtimeContractVersion": 1,
+  "embedType": "fixture--tailwind-client",
+  "clientKey": "fixture",
+  "calculatorKey": "tailwind-client",
+  "displayName": "Tailwind fixture",
+  "description": "Test fixture: a product-backed client UI styled with Tailwind v4.",
+  "integration": {
+    "type": "illustrata-products",
+    "productBinding": "multiple",
+    "productContractKeys": ["fixture-products"],
+    "endpointRoles": ["pdf"],
+    "compatibleProductTypes": ["illustration-demo"]
+  },
+  "deliveryModes": ["javascript", "hosted-tool"],
+  "publication": {
+    "independent": true
+  }
+}

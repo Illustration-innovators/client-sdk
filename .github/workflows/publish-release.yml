@@ -1,0 +1,134 @@
+# Reusable workflow: verify, build and publish one client UI release to the
+# Illustrata staging release bucket. Called by each client UI repository at the
+# tag matching its installed SDK version:
+#
+#   jobs:
+#     release:
+#       if: vars.ILLUSTRATA_PUBLISH_ENABLED == 'true'
+#       uses: Illustration-innovators/client-sdk/.github/workflows/publish-release.yml@v0.1.0
+#       permissions:
+#         contents: read
+#         id-token: write
+#       with:
+#         role-arn: ${{ vars.ILLUSTRATA_PUBLISH_ROLE_ARN }}
+#         aws-region: ${{ vars.ILLUSTRATA_AWS_REGION }}
+#         bucket: ${{ vars.ILLUSTRATA_RELEASE_BUCKET }}
+#
+# Every step runs the SDK from the caller's own lockfile; this file only
+# orchestrates. The AWS role (one per repository, Illustrata Terraform) limits
+# the caller to its own release folder, and nothing here activates a release.
+name: Publish client UI release
+
+on:
+  workflow_call:
+    inputs:
+      role-arn:
+        description: This repository's Illustrata publish role.
+        type: string
+        required: true
+      aws-region:
+        type: string
+        required: true
+      bucket:
+        description: Illustrata staging release bucket.
+        type: string
+        required: true
+      tool-dir:
+        description: Directory holding calculator.manifest.json.
+        type: string
+        default: "."
+      smoke-products:
+        description: Optional JSON file of products for the release smoke test.
+        type: string
+        default: ""
+      node-version:
+        type: string
+        default: "22"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run ci
+      - run: npx --no-install illustrata-check sync --strict
+
+  build:
+    name: Build release
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Build
+        env:
+          TOOL_DIR: ${{ inputs.tool-dir }}
+        run: npx --no-install illustrata-release build --dir "$TOOL_DIR" --require-publication
+      - name: Smoke test
+        env:
+          SMOKE_PRODUCTS: ${{ inputs.smoke-products }}
+        run: |
+          if [ -n "$SMOKE_PRODUCTS" ]; then
+            npx --no-install illustrata-check release dist/widget-releases --products "$SMOKE_PRODUCTS"
+          else
+            npx --no-install illustrata-check release dist/widget-releases
+          fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: release
+          path: dist/widget-releases/
+          retention-days: 14
+          if-no-files-found: error
+
+  publish:
+    name: Publish to staging
+    needs: build
+    runs-on: ubuntu-latest
+    environment: staging-candidates
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: npm
+      # The publisher comes from the caller's lockfile. No install scripts run
+      # on a runner that is about to hold AWS credentials.
+      - run: npm ci --ignore-scripts
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: release
+          path: candidate
+      - uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
+        with:
+          role-to-assume: ${{ inputs.role-arn }}
+          aws-region: ${{ inputs.aws-region }}
+      - name: Publish
+        env:
+          ILLUSTRATA_RELEASE_BUCKET: ${{ inputs.bucket }}
+        run: npx --no-install illustrata-release publish candidate
