@@ -1,0 +1,7 @@
+# Review is required only for files that change this tool's permanent release
+# identity, its publish trust or its build. Everything else merges on green CI.
+/calculator.manifest.json   __OWNERS__
+/illustrata.config.ts       __OWNERS__
+/package.json               __OWNERS__
+/package-lock.json          __OWNERS__
+/.github/                   __OWNERS__

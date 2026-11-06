@@ -1,0 +1,34 @@
+/*
+ * Template stylesheet: Tailwind v4 compiled into one string that the host
+ * injects into the Shadow DOM, so nothing leaks in or out.
+ *
+ * Branding arrives from the Illustrata portal as --illustrata-* custom
+ * properties on the host element (client-sdk docs/HOST_CONTRACT.md). Each
+ * token below resolves to one of them with a fallback, so the UI looks right
+ * when the portal supplies nothing. Replace the fallbacks with the client's
+ * brand values.
+ */
+@import "tailwindcss";
+
+/* The preview's Vite root is src/demo, so point source scanning at src/. */
+@source "../..";
+
+@theme {
+  --color-surface: var(--illustrata-base, #ffffff);
+  --color-ink: var(--illustrata-base-font, #1f2933);
+  --color-accent: var(--illustrata-accent, #1d3b6e);
+  --color-on-accent: var(--illustrata-accent-font, #ffffff);
+  --color-button: var(--illustrata-button, #2563eb);
+  --color-on-button: var(--illustrata-button-font, #ffffff);
+  --color-hover: var(--illustrata-hover, #1d4ed8);
+  --color-on-hover: var(--illustrata-hover-font, #ffffff);
+  --color-secondary: var(--illustrata-secondary, #f4f6f8);
+  --color-on-secondary: var(--illustrata-secondary-font, #1f2933);
+  --color-eyebrow: var(--illustrata-eyebrow, #52606d);
+  --color-line: #d9e2ec;
+  --color-muted: #616e7c;
+  --color-danger: #b42318;
+
+  --font-sans: var(--illustrata-font-body, ui-sans-serif, system-ui, sans-serif);
+  --font-heading: var(--illustrata-font-heading, ui-sans-serif, system-ui, sans-serif);
+}

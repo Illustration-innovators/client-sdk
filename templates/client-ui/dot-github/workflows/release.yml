@@ -1,0 +1,30 @@
+# Publishes a release to the Illustrata staging bucket on every merge to main,
+# through @illustrata/client-sdk's shared workflow. Publishing never activates
+# anything: an Illustrata admin selects, tests and approves each release.
+# Turned on by the repository variable ILLUSTRATA_PUBLISH_ENABLED=true.
+# Keep the @v tag equal to the installed SDK version (npx illustrata-sdk upgrade).
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: vars.ILLUSTRATA_PUBLISH_ENABLED == 'true'
+    uses: Illustration-innovators/client-sdk/.github/workflows/publish-release.yml@v__SDK_VERSION__
+    permissions:
+      contents: read
+      id-token: write
+    with:
+      role-arn: ${{ vars.ILLUSTRATA_PUBLISH_ROLE_ARN }}
+      aws-region: ${{ vars.ILLUSTRATA_AWS_REGION }}
+      bucket: ${{ vars.ILLUSTRATA_RELEASE_BUCKET }}

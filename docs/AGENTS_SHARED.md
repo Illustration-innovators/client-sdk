@@ -60,7 +60,9 @@ npx illustrata-release build
 npx illustrata-check release
 ```
 
-For visual changes, run `npm run dev` and attach screenshots.
+For visual changes, check them with `npm run dev`. If the repository's CI calls
+`pr-screenshots.yml`, the pull request run attaches phone and desktop
+screenshots of the built release; otherwise attach your own.
 
 ### Secrets
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// illustrata-check boundaries | removal | release | sync | drift
+// illustrata-check boundaries | removal | release | screenshots | sync | drift
 import { existsSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -8,6 +8,7 @@ import { loadIllustrataConfig } from '../lib/config.mjs';
 import { checkBoundaries } from '../lib/checks/boundaries.mjs';
 import { checkRemoval, DEFAULT_REMOVAL_COMMANDS } from '../lib/checks/removal.mjs';
 import { smokeTestRelease } from '../lib/checks/smoke.mjs';
+import { screenshotRelease, DEFAULT_WIDTHS } from '../lib/checks/screenshots.mjs';
 import { checkSync } from '../lib/checks/sync.mjs';
 import { checkRuntimeDrift } from '../lib/checks/drift.mjs';
 import { buildRelease } from '../lib/build.mjs';
@@ -20,6 +21,11 @@ Usage:
   illustrata-check removal <product>        The UI still works with src/products/<product> deleted
   illustrata-check release [<release dir>]  Build (unless a dir is given) and mount the release in a
                                             simulated browser [--products <file.json>]
+  illustrata-check screenshots [<release dir>]
+                                            Build (unless a dir is given) and save a PNG per product
+                                            and width in Chromium [--products <file.json>]
+                                            [--out <dir>, default screenshots] [--widths 390,1280]
+                                            Needs: npm i -D playwright && npx playwright install chromium
   illustrata-check sync [--strict]          Workflow reference and AGENTS.md match the installed SDK
   illustrata-check drift <runtime dir>      SDK runtime matches another copy (calculators tooling)`;
 
@@ -77,6 +83,29 @@ runCli(async (argv) => {
       const result = await smokeTestRelease({ directory, products });
       for (const warning of result.warnings) console.warn(`Warning: ${warning}`);
       console.log(`Release smoke test passed: ${result.embedType} mounted ${result.elements} elements with a ${result.styleBytes}-byte stylesheet.`);
+    } finally {
+      if (temporary) rmSync(temporary, { recursive: true, force: true });
+    }
+    return 0;
+  }
+
+  if (command === 'screenshots') {
+    const { flags, positionals } = parseArgs(rest, { strings: ['products', 'out', 'widths'] });
+    const productsFile = flags.products ?? checks.smoke?.products;
+    const products = productsFile ? JSON.parse(readFileSync(resolve(productsFile), 'utf8')) : [];
+    const widths = flags.widths
+      ? flags.widths.split(',').map(value => Number(value.trim()))
+      : DEFAULT_WIDTHS;
+    if (!widths.length || widths.some(width => !Number.isInteger(width) || width < 280 || width > 2560)) throw new Error('--widths takes comma-separated pixel widths between 280 and 2560');
+    let directory = positionals[0] ? findReleaseDir(resolve(positionals[0])) : null;
+    let temporary = null;
+    if (!directory) {
+      temporary = join(tmpdir(), `illustrata-screenshots-${process.pid}`);
+      directory = (await buildRelease({ outDir: temporary, versionStamp: true })).directory;
+    }
+    try {
+      const result = await screenshotRelease({ directory, outDir: resolve(flags.out ?? 'screenshots'), products, widths });
+      console.log(`Saved ${result.files.length} screenshot(s) of ${result.embedType}:\n  ${result.files.join('\n  ')}`);
     } finally {
       if (temporary) rmSync(temporary, { recursive: true, force: true });
     }

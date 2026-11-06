@@ -63,6 +63,18 @@ describe('sync', () => {
     expect(checkSync({ root, strict: true }).problems).toEqual([]);
   });
 
+  it('keeps the screenshots workflow on the installed SDK version too', () => {
+    const root = tempDir();
+    const screenshots = 'Illustration-innovators/client-sdk/.github/workflows/pr-screenshots.yml';
+    write(root, '.github/workflows/release.yml', `jobs:\n  release:\n    uses: ${PUBLISH_WORKFLOW}@v${SDK_VERSION}\n`);
+    write(root, '.github/workflows/ci.yml', `jobs:\n  screenshots:\n    uses: ${screenshots}@v0.0.1\n`);
+    write(root, 'AGENTS.md', `# Repo\n\n${sharedAgentsBlock()}\n`);
+    expect(checkSync({ root }).problems.join('\n')).toMatch(/pr-screenshots.yml is @v0.0.1/);
+    checkSync({ root, fix: true });
+    expect(readFileSync(join(root, '.github/workflows/ci.yml'), 'utf8')).toContain(`${screenshots}@v${SDK_VERSION}`);
+    expect(checkSync({ root, strict: true }).problems).toEqual([]);
+  });
+
   it('adds or refreshes the shared AGENTS.md section', () => {
     const root = tempDir();
     write(root, 'AGENTS.md', `# Repo\n\nLocal rules.\n\n${SHARED_START}\nold text\n${SHARED_END}\n\nMore local rules.\n`);

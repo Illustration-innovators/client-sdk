@@ -1,7 +1,23 @@
 # Setting up a client UI repository
 
-For a new repository or one converting to the SDK. Steps 1-5 are in the
-repository; step 6 is GitHub settings; step 7 is Illustrata's side.
+**New repository:** generate it, then do steps 6 and 7.
+
+```bash
+npx -p @illustrata/client-sdk create-client-ui <clientKey> --name "Client Name"
+cd <clientKey>-ui && git init -b main && npm install && npx playwright install chromium && npm run ci
+```
+
+`<clientKey>` must equal the client's key in the Illustrata portal; the release
+name is `<clientKey>--illustration` (`--tool` changes the second part). The
+repository has steps 1-5 done: a template shell, one example product module
+to replace (`docs/ADDING_A_PRODUCT.md` in it), the local preview, tests,
+CI with screenshots, the release workflow, CODEOWNERS (`--owners`) and
+AGENTS.md with the shared section. Publication starts off; turn on
+`publication.independent` and `ILLUSTRATA_PUBLISH_ENABLED` for the first
+release.
+
+**Existing repository converting to the SDK:** steps 1-5 by hand. Step 6 is
+GitHub settings; step 7 is Illustrata's side.
 
 ## 1. Install
 
@@ -91,6 +107,25 @@ fails CI when they differ.
 `npm run ci`, `npx illustrata-check sync --strict`,
 `npx illustrata-check release`. Pin every action to a commit SHA, as
 `publish-release.yml` does.
+
+Pull request screenshots: add `playwright` as a dev dependency
+(`npm i -D playwright`) and a job that calls the reusable workflow at the same
+SDK tag:
+
+```yaml
+  screenshots:
+    if: github.event_name == 'pull_request'
+    uses: Illustration-innovators/client-sdk/.github/workflows/pr-screenshots.yml@v0.2.0
+    permissions:
+      contents: read
+    with:
+      products: tests/fixtures/products.json   # optional, host-shaped products
+```
+
+It builds the release, screenshots it at 390 and 1280 pixels wide for each
+product, uploads the PNGs as the `screenshots` artifact and links them in the
+run summary. Locally: `npx playwright install chromium`, then
+`npx illustrata-check screenshots`.
 
 ## 5. AGENTS.md, CODEOWNERS, `.gitignore`
 

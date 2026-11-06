@@ -1,5 +1,19 @@
 # @illustrata/client-sdk
 
+## 0.2.0
+
+- `create-client-ui <clientKey>`: writes a new client UI repository (template,
+  example product module, preview, tests, CI with screenshots, release
+  workflow, CODEOWNERS, AGENTS.md with the shared section) pinned to this SDK
+  version. SDK CI scaffolds one and runs its checks on every change.
+- `illustrata-check screenshots`: builds the release and saves a full-page PNG
+  per product at phone and desktop width in real Chromium, with every request
+  answered locally. Needs the new optional peer dependency `playwright`.
+- Reusable `pr-screenshots.yml` workflow: runs it on pull requests and uploads
+  the PNGs as an artifact linked from the run summary.
+- `illustrata-check sync` and `illustrata-sdk sync` now keep every SDK workflow
+  reference on the installed version, not only `publish-release.yml`.
+
 ## 0.1.1
 
 - First release published by the `Publish SDK to npm` workflow through npm

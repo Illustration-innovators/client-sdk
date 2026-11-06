@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Typecheck, boundaries, manifest, tests, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run ci
+      - name: Workflow and AGENTS.md match the installed SDK
+        run: npx --no-install illustrata-check sync --strict
+      - name: Release build and smoke test
+        run: npx --no-install illustrata-check release
+
+  screenshots:
+    name: Release screenshots
+    if: github.event_name == 'pull_request'
+    uses: Illustration-innovators/client-sdk/.github/workflows/pr-screenshots.yml@v__SDK_VERSION__
+    permissions:
+      contents: read
+    with:
+      products: tests/fixtures/products.json
+
+  products:
+    name: List product modules
+    runs-on: ubuntu-latest
+    outputs:
+      list: ${{ steps.list.outputs.list }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - id: list
+        run: |
+          list=$(node -e 'const fs=require("node:fs");console.log(JSON.stringify(fs.readdirSync("src/products").filter(n=>fs.statSync("src/products/"+n).isDirectory())))')
+          echo "list=$list" >> "$GITHUB_OUTPUT"
+
+  removal:
+    name: Base template works without ${{ matrix.product }}
+    needs: [verify, products]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        product: ${{ fromJSON(needs.products.outputs.list) }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Remove ${{ matrix.product }} and check the rest still works
+        env:
+          PRODUCT: ${{ matrix.product }}
+        run: npx --no-install illustrata-check removal "$PRODUCT"

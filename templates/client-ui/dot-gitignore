@@ -1,0 +1,12 @@
+node_modules/
+dist/
+dist-preview/
+screenshots/
+coverage/
+.env
+.env.*
+!.env.example
+*.local
+.DS_Store
+npm-debug.log*
+.illustrata-removal-check/
