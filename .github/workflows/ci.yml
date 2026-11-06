@@ -25,6 +25,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --ignore-scripts
+      - name: Install Chromium for the screenshot test
+        run: npx --no-install playwright install --with-deps chromium
       - run: npm run ci
       - name: Package contents
         run: npm pack --dry-run
