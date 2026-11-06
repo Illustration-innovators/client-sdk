@@ -1,0 +1,81 @@
+# Reusable workflow: screenshot a client UI release at phone and desktop width
+# so a pull request can be reviewed without running anything. Called from the
+# client UI repository's CI at the tag matching its installed SDK version:
+#
+#   jobs:
+#     screenshots:
+#       if: github.event_name == 'pull_request'
+#       uses: Illustration-innovators/client-sdk/.github/workflows/pr-screenshots.yml@v0.2.0
+#       permissions:
+#         contents: read
+#       with:
+#         products: tests/fixtures/products.json   # optional
+#
+# The caller lists `playwright` as a dev dependency. Screenshots are uploaded
+# as the `screenshots` artifact and listed in the run summary. The job has
+# read-only permissions and no secrets; every request the page makes is
+# answered locally, so nothing reaches the network.
+name: Client UI screenshots
+
+on:
+  workflow_call:
+    inputs:
+      products:
+        description: Optional JSON file of host-shaped products; one screenshot set per product.
+        type: string
+        default: ""
+      widths:
+        description: Comma-separated pixel widths.
+        type: string
+        default: "390,1280"
+      node-version:
+        type: string
+        default: "22"
+
+permissions:
+  contents: read
+
+jobs:
+  screenshots:
+    name: Release screenshots
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Install Chromium
+        run: npx --no-install playwright install --with-deps chromium
+      - name: Screenshots
+        env:
+          PRODUCTS: ${{ inputs.products }}
+          WIDTHS: ${{ inputs.widths }}
+        run: |
+          if [ -n "$PRODUCTS" ]; then
+            npx --no-install illustrata-check screenshots --products "$PRODUCTS" --widths "$WIDTHS" --out screenshots
+          else
+            npx --no-install illustrata-check screenshots --widths "$WIDTHS" --out screenshots
+          fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        id: upload
+        with:
+          name: screenshots
+          path: screenshots/
+          retention-days: 14
+      - name: Summary
+        env:
+          ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
+        run: |
+          {
+            echo "### Release screenshots"
+            echo
+            echo "Download: [screenshots]($ARTIFACT_URL)"
+            echo
+            for file in screenshots/*.png; do echo "- $(basename "$file")"; done
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,9 +1,10 @@
-import { cpSync, readFileSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { buildRelease } from '../lib/build.mjs';
 import { loadVerifiedRelease, publishRelease } from '../lib/publish.mjs';
 import { smokeTestRelease } from '../lib/checks/smoke.mjs';
+import { screenshotRelease, screenshotName } from '../lib/checks/screenshots.mjs';
 import { SDK_VERSION } from '../lib/sdk.mjs';
 import { COMMIT, FIXTURE, fakeS3, fixtureProducts, tempDir } from './support.mjs';
 
@@ -56,6 +57,23 @@ describe('smoke test', () => {
   it('passes without products when the UI renders static content', async () => {
     const result = await smokeTestRelease({ directory: built.directory });
     expect(result.warnings).toEqual([]);
+  });
+});
+
+// Needs Chromium from `npx playwright install chromium`; CI installs it.
+const chromium = await import('playwright').then(({ chromium }) => existsSync(chromium.executablePath())).catch(() => false);
+
+describe('screenshots', () => {
+  it.skipIf(!chromium)('saves a full-page PNG per product and width from real Chromium', async () => {
+    const outDir = tempDir('illustrata-screens-');
+    const result = await screenshotRelease({ directory: built.directory, outDir, products: fixtureProducts, widths: [390, 1024] });
+    expect(result.files.map(file => file.split('/').pop())).toEqual(['fixture-fia-390.png', 'fixture-fia-1024.png']);
+    for (const file of result.files) expect(readFileSync(file).subarray(1, 4).toString()).toBe('PNG');
+  }, 60_000);
+  it('names files from the product, safely', () => {
+    expect(screenshotName({ slug: 'Fixture FIA / 10' }, 0)).toBe('fixture-fia-10');
+    expect(screenshotName({}, 2)).toBe('product-3');
+    expect(screenshotName({ slug: '../../etc' }, 0)).toBe('etc');
   });
 });
 

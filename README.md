@@ -29,9 +29,10 @@ them.
 | `illustrata-release build` | Builds `widget.js`, `assets/calculator.json` and `release.json` under `dist/widget-releases/<embedType>/<releaseId>/` |
 | `illustrata-release publish` | Uploads one built release to the staging bucket, write-once, `release.json` last (CI only) |
 | `illustrata-check release` | Builds the release and mounts it in a simulated browser: Shadow DOM, stylesheet, no uncaught errors |
+| `illustrata-check screenshots` | Builds the release and saves a full-page PNG per product at phone and desktop width in Chromium (needs `playwright` as a dev dependency) |
 | `illustrata-check boundaries` | Import rules: the template never imports a product, products never import each other |
 | `illustrata-check removal <product>` | Deletes a product module and proves the UI still typechecks, tests and builds |
-| `illustrata-check sync` | The publish workflow reference and AGENTS.md shared section match the installed SDK |
+| `illustrata-check sync` | The SDK workflow references and AGENTS.md shared section match the installed SDK |
 | `illustrata-check drift <dir>` | The SDK runtime matches another copy of it (the calculators repository's, until it migrates) |
 | `illustrata-sdk upgrade <version>` | Installs an exact SDK version and updates the workflow reference and AGENTS.md together |
 | `illustrata-sdk sync` | Rewrites the workflow reference and AGENTS.md shared section to the installed version |
