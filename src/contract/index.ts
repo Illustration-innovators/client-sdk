@@ -25,7 +25,10 @@ export interface CalculatorManifest {
   description: string;
   integration: CalculatorIntegration;
   deliveryModes: CalculatorDeliveryMode[];
-  requiredCapabilities?: Array<"staff-workspace-v1">;
+  /** `staff-workspace-v1`: internal Hosted Tools only, cases saved on the
+   * platform. `workspace-v1`: public or internal Hosted Tools; public visitors
+   * get a workspace that lives in their browser tab only. */
+  requiredCapabilities?: Array<"staff-workspace-v1" | "workspace-v1">;
 }
 
 export interface CalculatorProduct {
@@ -35,7 +38,7 @@ export interface CalculatorProduct {
   variants: Array<Record<string, unknown>>;
 }
 
-/** Optional staff workspace capability, supplied only by an authorized Hosted Tool. */
+/** Optional workspace, supplied only by a Hosted Tool (`workspace-v1`, `staff-workspace-v1`). */
 export interface CalculatorWorkspaceUser {
   id: string;
   name: string;
@@ -76,6 +79,10 @@ export interface CalculatorWorkspaceSave {
 export interface CalculatorWorkspace {
   version: 1;
   user: CalculatorWorkspaceUser;
+  /** Where cases are kept. "server": saved on the platform (internal staff).
+   * "browser": this tab's memory only, lost on refresh (public Hosted Tools).
+   * Absent on runtimes older than SDK 0.3.0, which only supplied "server". */
+  persistence?: "server" | "browser";
   /** Preview adapters are explicit; live transport never falls back to fixtures. */
   preview?: boolean;
   listCases(query?: URLSearchParams): Promise<CalculatorWorkspaceList>;

@@ -125,6 +125,7 @@ export function runTemplate(expectedEmbedType: string, mount: TemplateMount) {
       hostedToolUser: config.hostedToolUser ?? null,
       skinId: config.skinId ?? null,
       workspace: config.workspace ?? null,
+      browserWorkspace: config.browserWorkspace ?? null,
     });
     const observer = new MutationObserver(() => {
       if (!target.isConnected || !shadowRoot.host.isConnected) {

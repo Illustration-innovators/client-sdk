@@ -43,8 +43,19 @@ Types: `@illustrata/client-sdk/contract`.
   it, the call uses the product's main endpoint (role `primary`, the admin's
   "PDF Endpoint URL"). A role the manifest does not declare will not be
   configured. PORTAL_SETUP.md maps roles to admin fields.
-- `workspace` exists only when the tool's access mode supplies it. Today that
-  is internal Hosted Tools opened by Illustrata staff (`staff-workspace-v1`).
+- `workspace` exists only when the tool's access mode supplies it:
+  - Internal Hosted Tools opened by Illustrata staff: `persistence: "server"`,
+    the signed-in staff user, cases saved on the platform.
+  - Public Hosted Tools: `persistence: "browser"`, user `Guest`. Cases live in
+    the visitor's browser tab only; a refresh or new tab starts empty and
+    nothing reaches the platform. List, search, filters, sorting and the
+    dashboard columns behave as on the server.
+  - Embeds and SAML Hosted Tools: none.
+
+  `requiredCapabilities` in the manifest restricts where a UI may be selected:
+  `workspace-v1` allows public and internal Hosted Tools, `staff-workspace-v1`
+  internal ones only. A later release may change `staff-workspace-v1` to
+  `workspace-v1` under the same name; no other capability change is allowed.
 
 ## Theme
 

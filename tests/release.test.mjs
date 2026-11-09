@@ -24,6 +24,13 @@ describe('descriptor', () => {
     expect(() => calculatorDescriptor({ ...manifest, requiredCapabilities: ['something-else'] })).toThrow();
   });
 
+  it('accepts workspace-v1 with the same delivery rule', () => {
+    const workspace = { ...manifest, deliveryModes: ['hosted-tool'], requiredCapabilities: ['workspace-v1'] };
+    expect(calculatorDescriptor(workspace).requiredCapabilities).toEqual(['workspace-v1']);
+    expect(() => calculatorDescriptor({ ...workspace, deliveryModes: ['iframe', 'hosted-tool'] })).toThrow(/Hosted Tool-only/);
+    expect(() => calculatorDescriptor({ ...workspace, requiredCapabilities: ['workspace-v1', 'staff-workspace-v1'] })).toThrow();
+  });
+
   it('rejects unknown product types, delivery modes and bad keys', () => {
     expect(() => calculatorDescriptor({ ...manifest, integration: { ...manifest.integration, compatibleProductTypes: ['acme-template'] } })).toThrow();
     expect(() => calculatorDescriptor({ ...manifest, deliveryModes: ['email'] })).toThrow();

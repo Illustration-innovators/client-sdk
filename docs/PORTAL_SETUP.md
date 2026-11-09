@@ -50,8 +50,10 @@ shape the JSON the UI's results read.
 - **Embed** (script or iframe on a website): link the products, set allowed
   domains and the theme.
 - **Hosted Tool** (a page Illustrata hosts): link the products, choose the
-  access mode and theme. A UI that requires `staff-workspace-v1` runs only on
-  an internal Hosted Tool today.
+  access mode and theme. A UI that requires `workspace-v1` runs on a public or
+  internal Hosted Tool: public visitors keep their cases in their own browser
+  tab only, staff save them on the platform. A UI that requires
+  `staff-workspace-v1` runs only on an internal Hosted Tool.
 
 ## 6. Release selection
 

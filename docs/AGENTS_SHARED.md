@@ -37,6 +37,13 @@ follow-ups" in the pull request and stop at the boundary.
   design must work when the host supplies none.
 - `launchContext`, `hostedToolUser` and `workspace` are optional. Treat them as
   absent unless the delivery mode provides them.
+- A Hosted Tool UI must work in every access mode its manifest allows. A UI
+  with saved cases or a dashboard declares `workspace-v1` (public and internal
+  Hosted Tools) unless it truly needs cases saved on the platform
+  (`staff-workspace-v1`, internal only). Check `runtime.workspace.persistence`:
+  `"browser"` means a public visitor whose cases live in this tab only, so say
+  that in the UI. Never build your own storage (localStorage, IndexedDB,
+  cookies) for cases.
 - Build settings that vary (Tailwind, PostCSS) live in `illustrata.config.ts`
   and nowhere else. Do not add `@vitejs/plugin-react` there; the builder adds it.
 
@@ -46,7 +53,8 @@ follow-ups" in the pull request and stop at the boundary.
   `<clientKey>--<tool>`) and its contract: client key, product binding,
   compatible product types, delivery modes and required capabilities.
 - The first release under a name fixes that contract permanently. Changing any
-  of those fields needs a new name (`<clientKey>--<tool>-v2`). A demo or pilot
+  of those fields needs a new name (`<clientKey>--<tool>-v2`); the one
+  exception is changing `staff-workspace-v1` to `workspace-v1`. A demo or pilot
   gets its own name. Changes to the manifest need a code-owner review.
 - `publication.independent: true` lets a merge to `main` publish a release to
   staging. Publishing never activates anything: a person selects, tests and

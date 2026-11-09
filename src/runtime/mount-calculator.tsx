@@ -1,6 +1,7 @@
 import { createElement, type ComponentType } from 'react';
 import { createRoot } from 'react-dom/client';
 import { buildCalculatorProductQuery, callEmbedProduct, reportClientError, type CalculatorProductRequestOptions } from './api/embed-client';
+import { createBrowserWorkspace } from './api/browser-workspace';
 import { createWorkspaceRuntime } from './api/workspace-client';
 import { runTemplate } from './template-entry';
 import type { TemplateMount } from './types';
@@ -21,7 +22,8 @@ export function runCalculator(
     const runtime = productBacked ? {
       products: props.products.map(product => ({ ...product, variants: product.variants.map(variant => ({ ...variant })) })),
       launchContext: props.launchContext ?? null,
-      workspace: createWorkspaceRuntime(props.apiBase, props.embedToken, props.workspace),
+      workspace: createWorkspaceRuntime(props.apiBase, props.embedToken, props.workspace)
+        ?? createBrowserWorkspace(props.embedToken, props.products, props.browserWorkspace),
       calculate: <T,>(slug: string, inputs: Record<string, unknown>, options: CalculatorProductRequestOptions = {}) =>
         callEmbedProduct<T>(props.apiBase, props.embedToken, slug, inputs, { query: buildQuery(options), signal: options.signal }),
       reportError: (error: unknown, context?: Record<string, unknown>) =>
