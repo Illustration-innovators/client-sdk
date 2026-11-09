@@ -1,6 +1,6 @@
 {
   "name": "@illustrata/client-sdk",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Build, preview, check and publish client UI releases for the Illustrata platform.",
   "license": "UNLICENSED",
   "type": "module",
