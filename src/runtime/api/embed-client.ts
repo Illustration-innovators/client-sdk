@@ -38,6 +38,7 @@ export async function fetchEmbedConfig(
     hostedToolUser: raw.hostedToolUser ?? null,
     skinId: raw.skinId ?? null,
     workspace: raw.workspace ?? null,
+    browserWorkspace: raw.browserWorkspace ?? null,
   };
 }
 

@@ -64,6 +64,8 @@ export interface HostedToolUser {
 
 export interface EmbedConfigResponse {
   workspace?: { version: 1; user: CalculatorWorkspaceUser } | null;
+  /** Public Hosted Tools: the runtime keeps cases in this browser tab only. */
+  browserWorkspace?: { version: 1 } | null;
   embedType: string;
   products: EmbedProduct[];
   colors: EmbedColors;
@@ -77,6 +79,8 @@ export interface EmbedConfigResponse {
 
 export interface MountProps {
   workspace?: { version: 1; user: CalculatorWorkspaceUser } | null;
+  /** Public Hosted Tools: the runtime keeps cases in this browser tab only. */
+  browserWorkspace?: { version: 1 } | null;
   apiBase: string;
   embedToken: string;
   products: EmbedProduct[];

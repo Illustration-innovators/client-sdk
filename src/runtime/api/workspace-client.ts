@@ -67,6 +67,7 @@ export function createWorkspaceRuntime(
   const idPath = (id: string) => `/${encodeURIComponent(id)}`;
   return {
     version: 1,
+    persistence: "server",
     user: { ...configuration.user },
     listCases: (query = new URLSearchParams()) =>
       request(`?${query.toString()}`),
