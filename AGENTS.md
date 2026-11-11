@@ -1,6 +1,6 @@
 # client-sdk - Agent Operating Instructions
 
-Last updated: 2026-11-06
+Last updated: 2026-11-11
 
 This repository is shared by every Illustrata client UI repository and, later,
 the calculators repository. A change here reaches every client that upgrades.
@@ -18,6 +18,7 @@ Read this file before changing anything.
 | `src/contract`, `src/products`, `src/preview`, `src/postcss`, `src/config.ts` | Types and helpers client repositories import | Breaking a type is a breaking change |
 | `.github/workflows/publish-release.yml` | Reusable workflow every client repository calls | Security-relevant |
 | `docs/AGENTS_SHARED.md` | Copied into every client repository's AGENTS.md | Changes what every client's agents are told |
+| `docs/UI_REVIEWS.md`, `templates/client-ui/docs/UI_REVIEWS.md` | Optional UI review authoring contract and starter readiness checklist | Keep platform compatibility and unimplemented scaffold work explicit |
 
 ## Rules
 
@@ -49,6 +50,12 @@ Read this file before changing anything.
 - **No client code.** Nothing specific to one client belongs here. Client
   behaviour lives in that client's repository; platform behaviour in the
   Illustrata monorepo.
+- **UI review guidance.** Keep the fixture/event/marker contract in
+  `docs/UI_REVIEWS.md`, shared agent requirements in `docs/AGENTS_SHARED.md`,
+  and the starter checklist under `templates/client-ui/docs/`. Document
+  platform prerequisites and distinguish generated guidance from implemented
+  client review support. Do not change runtime or release contracts as part of
+  a documentation-only update.
 
 ## Verification
 

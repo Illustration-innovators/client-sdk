@@ -161,3 +161,17 @@ An Illustrata maintainer adds the repository to the publisher map in the
 monorepo's Terraform (its immutable repository ID and its client keys) and
 applies it. That creates the repository's publish role, limited to
 `widget/releases/<clientKey>--*`. Until then the publish job is refused by AWS.
+
+
+## 8. Annotation review readiness
+
+For a UI that will be reviewed through a Hosted Tool review link, follow
+[UI_REVIEWS.md](UI_REVIEWS.md). Confirm support in the target platform. The
+starter writes a client-owned `docs/UI_REVIEWS.md` checklist, but it does not
+implement a fixture exporter, application state bridge or review links.
+
+Add stable screen and leaf-control markers while building the UI. Before review,
+export synthetic product/variant scenarios and implement capture/restore without
+calculation, autosave or other side effects. Verify the actual built release's
+select/comment/reopen loop, viewport preservation and continuous scrolling.
+Keep live authentication/integration validation separate from synthetic UI review.

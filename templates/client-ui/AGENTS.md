@@ -47,6 +47,14 @@ it under "Platform follow-ups" in the pull request and stop at the boundary.
   portal. List new keys under "Platform follow-ups".
 - Declare an endpoint role in the manifest only if the UI calls it.
 
+## UI reviews
+
+Read `docs/UI_REVIEWS.md` before implementing review support. The scaffold only
+provides a checklist; product fixtures, stable semantic markers and a
+synthetic-only state bridge still need implementation. Maintain that document
+as screens/products change, and verify the actual release's comment restoration,
+viewport changes and scrolling before claiming review readiness.
+
 ## Before opening a pull request
 
 ```bash

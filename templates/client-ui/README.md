@@ -14,3 +14,8 @@ Release name: `__CLIENT_KEY__--__TOOL__`. Merges to `main` publish a release to
 Illustrata staging once `ILLUSTRATA_PUBLISH_ENABLED` is `true`; publishing never
 activates anything. Read `AGENTS.md` before changing the repository and
 `docs/ADDING_A_PRODUCT.md` before adding a product.
+
+
+For annotation reviews, read `docs/UI_REVIEWS.md`. It is an authoring checklist,
+not an implemented fixture exporter or state bridge. Confirm platform support
+and complete the checklist before sharing a Hosted Tool UI review.
