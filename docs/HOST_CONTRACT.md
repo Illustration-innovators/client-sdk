@@ -81,3 +81,14 @@ of these are set.
   the one bundle.
 - Assume a delivery mode: the same release can run in an embed, an iframe or a
   Hosted Tool unless its manifest restricts it.
+
+
+## Synthetic UI review frames
+
+A platform supporting Hosted Tool UI reviews can run the same immutable release
+against frozen synthetic config and responses. It supplies no live Hosted Tool
+credential, launch identity or cases. This optional frame mode does not change
+`IllustrataCalculatorRuntime` or the release manifest; see
+[UI_REVIEWS.md](UI_REVIEWS.md) for the separate DOM marker/state event contract,
+fixture bounds and required checks. The SDK runtime/build output is unchanged
+by this documentation. Confirm platform support before using the review flow.

@@ -84,6 +84,7 @@ repositories pin an exact version and upgrade deliberately.
 
 | File | Covers |
 | --- | --- |
+| [docs/UI_REVIEWS.md](docs/UI_REVIEWS.md) | Optional annotation-review authoring: markers, synthetic fixtures, state restoration and readiness checks |
 | [docs/HOST_CONTRACT.md](docs/HOST_CONTRACT.md) | What a client UI receives from the host and may do |
 | [docs/RELEASE_PATH.md](docs/RELEASE_PATH.md) | From merge to production, and who does what |
 | [docs/PORTAL_SETUP.md](docs/PORTAL_SETUP.md) | Configuring a client's products and tools in the admin portal |
