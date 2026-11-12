@@ -51,20 +51,21 @@ follow-ups" in the pull request and stop at the boundary.
 
 - For a new or substantially changed Hosted Tool UI, read the installed SDK's
   `docs/UI_REVIEWS.md` and maintain a client-owned `docs/UI_REVIEWS.md` checklist.
-  Confirm platform synthetic-review support; the scaffold alone is not ready.
+  Confirm platform staging live-review support; the scaffold alone is not ready.
 - Keep stable screen/navigation keys and explicit leaf-control review targets.
   Do not derive identity from display copy, user data, generated IDs or mutable
   ordering. Cover every supported product/variant and conditional state.
-- Supply a repository-owned synthetic fixture exporter and a versioned,
-  synthetic-only state capture/restore bridge. Never put credentials, real
-  cases or live launch/session context in fixtures or captured state.
+- Supply a versioned review-only state bridge for `hosted-live-v1` and optional
+  legacy `synthetic-v1`. Live reviews use real configured staging calculations;
+  no fixture upload is required. Never capture credentials or existing cases.
 - Restoring a review state must not calculate, autosave, submit or emit events.
   Keep ordinary delivery unchanged. UI review access is separate from tool
   authentication and does not grant access to private sessions or cases.
 - Verify select/comment/reopen against the actual built release, including
   dialogs, repeated controls, viewport changes and continuous preview scrolling
   in both directions at desktop/tablet/mobile sizes. Record unsupported screens
-  explicitly; do not describe fixture output as a verified calculation.
+  explicitly; compare live outputs with ordinary tool runs. Historical restored
+  results are not freshly executed calculations.
 
 ### Release identity
 
