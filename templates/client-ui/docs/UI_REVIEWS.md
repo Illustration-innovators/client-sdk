@@ -1,25 +1,23 @@
 # UI review readiness
 
-This starter is not annotation-review ready yet. Use the installed SDK's
-[UI review authoring guide](../node_modules/@illustrata/client-sdk/docs/UI_REVIEWS.md)
-(the path from the repository root is
-`node_modules/@illustrata/client-sdk/docs/UI_REVIEWS.md`) when implementing it.
-Confirm the target platform supports Hosted Tool synthetic reviews first.
+This starter is not annotation-review ready yet. Read the installed SDK's
+`node_modules/@illustrata/client-sdk/docs/UI_REVIEWS.md` before implementing it.
+Confirm platform staging live Hosted Tool review support.
 
-Before sharing a review, implement and document:
+Before sharing a review:
 
-- Stable active-screen/navigation markers and explicit leaf-control targets.
-- A repository-owned `review:fixture` exporter with synthetic products,
-  responses and scenarios for every supported product/variant and key UI state.
-- A versioned synthetic-only state capture/restore bridge. Restoring must not
-  calculate, autosave, submit or emit integration events.
-- Tests that reopen comments after changing product, variant, dialog and viewport.
-- Desktop/tablet/mobile scroll verification: continuous wheel/trackpad motion,
-  fit/zoom, long screens and independent comment-rail scrolling.
-- Explicit limits for auth, saved cases or other surfaces needing a separate
-  synthetic adapter; never use real credentials or client records in a review.
+- Create a Hosted Tool, connect products and explicitly select its published UI
+  release. Publication alone does not activate a build.
+- Add stable active-screen/navigation markers and explicit leaf-control targets.
+- Implement the versioned `hosted-live-v1` review state bridge. Restoration must
+  not calculate, autosave, submit or emit integration events.
+- Compare real calculation and PDF results with ordinary tool access for the
+  same inputs/configuration. Live reviews need no synthetic fixture upload.
+- Test comment/reopen after product, variant, dialog and viewport changes.
+- Verify desktop/tablet/mobile scrolling, fit/zoom and nested controls.
+- Identify unsupported workspace/integration surfaces; never borrow real staff
+  or agent sessions/cases. Normal access mode does not need to become public.
 
-Record the exporter command/output path, scenario list, state version and marker
-conventions here once implemented. Upload the fixture through the platform's
-review creation flow and review the actual pinned release, not a separate mock UI.
-The SDK scaffold does not create this exporter, state bridge or a review link.
+Maintain a client guide with setup, state version, markers, supported screens and
+verification. New rounds use the build selected on the tool; prior rounds remain
+pinned. This scaffold does not implement the state bridge or create review links.

@@ -1,28 +1,35 @@
 # Preparing a client UI for annotation reviews
 
-A review shows the actual immutable client release with synthetic products,
-responses and repeatable UI states. Review links, access controls, comments,
-version rounds, screenshots and exports belong to the platform. The client UI
-owns stable element identities, synthetic fixtures and state restoration.
+A staging live Hosted Tool review shows the actual immutable client release and
+runs real calculations against the tool's configured linked products. The
+platform owns review links, access, calculation authorization, comments and
+rounds. Client repositories own screens, stable element identities and state
+restoration. No release manifest or SDK runtime format change is required.
 
-This is an optional authoring contract for platforms that support Hosted Tool
-synthetic UI reviews. Confirm that support with the platform maintainer before
-creating a review. Installing this SDK does not enable it in a portal, and this
-guide does not change the release manifest or runtime contract version.
+## Platform prerequisites and access
 
-## What a reviewer can access
+The platform must support `hosted-live-v1` reviews. Create and configure the
+Hosted Tool first, publish its release through the normal independent release
+workflow, then explicitly select that release on the staging tool. Publication
+and registration do not activate a tool. A review round pins the selected UI
+release; publishing a newer build does not change an existing round. Start a new
+round after selecting the newer build.
 
-The review link has its own access rules, independent of the Hosted Tool's
-public, SAML or internal access mode. A reviewer does not need the tool's login;
-the review does not grant that login or expose its sessions, saved cases or
-credentials. The platform may password-protect, expire or revoke the link.
+The review link grants a separate staging review capability. It can work with
+public, internal or SAML tools without granting a staff account or SAML identity.
+Do not change the tool to public. Normal tool authentication remains separate.
+The platform may password-protect, expire or revoke the link. Production must
+not issue or accept live Hosted Tool review capabilities.
 
-Synthetic review responses are fixed UI examples, not verified calculations.
-Label them as synthetic. Keep real customer data, API keys, session tokens,
-launch claims and live endpoint URLs out of fixtures and captured state. The
-platform's synthetic frame disables network connections and does not perform
-real calculations, case writes, application submissions or integration events.
-Test live authentication and integration behavior separately.
+Explicit reviewer actions run real rates, illustrations and generated PDFs using
+the configured staging calculation pipeline. A review does not grant existing
+agent cases, staff workspaces, application submission or downstream deliveries.
+Unsupported surfaces must be identified in the client guide. Never capture
+credentials, session tokens or existing case identities in comment state.
+
+UI release pinning does not freeze model versions, rates or product configuration.
+A restored result is historical display state, not a new calculation. Run again
+to obtain current results and use request IDs when discussing calculation errors.
 
 ## 1. Identify screens and elements
 
@@ -61,7 +68,11 @@ row positions, restore its exact ordering before resolving a comment and state
 that limitation in the client repository's review guide. Never claim that row 2
 identifies the same resource after arbitrary insertion or sorting.
 
-## 2. Export a versioned synthetic fixture
+## 2. Legacy synthetic fixtures (optional)
+
+New live reviews do not require fixture uploads or canned responses. This
+section documents older `synthetic-v1` rounds and optional isolated visual tests.
+These examples cannot validate calculation accuracy and must stay labelled.
 
 Add a repository-owned export command, conventionally `npm run review:fixture`,
 and document its output path. The SDK does not supply this command automatically.
@@ -119,17 +130,17 @@ A dashboard or other context-dependent screen needs a reviewed synthetic adapter
 supported by the platform before it can be claimed as covered. Do not enable
 dormant features, bypass access rules or substitute real cases to fill that gap.
 
-## 3. Implement a synthetic-only state bridge
+## 3. Implement a review-only state bridge
 
 A screen key alone cannot restore product choice, variant, input values, open
-dialogs or results. The review host identifies synthetic mode by setting:
+dialogs or results. The review host identifies live review mode by setting:
 
 ```ts
-document.documentElement.dataset.illustrataReviewRuntime = "synthetic-v1";
+document.documentElement.dataset.illustrataReviewRuntime = "hosted-live-v1";
 ```
 
 This marker selects review behavior; it is not an authorization credential.
-Install review listeners only in that mode. Give the application's state root
+Install review listeners only for `hosted-live-v1` or legacy `synthetic-v1`. Give the application's state root
 `data-illustrata-review-state-root="your-ui-v1"` and implement these DOM events:
 
 | Event | Direction | Contract |
@@ -148,8 +159,9 @@ product whose required option has not yet been chosen.
 Restore React/application state directly. Cancel or invalidate pending requests
 so an old response cannot overwrite the restored state. Restoration must not run
 a calculation, autosave, submit an application or emit an integration event.
-Guard automatic prefetch/autosave effects in synthetic mode as needed. Explicit
-reviewer actions may request the platform's canned responses. Unknown or
+Guard automatic prefetch/autosave effects during restoration as needed. Explicit
+reviewer actions use real calculations in live mode and canned data in legacy
+synthetic mode. Never infer authorization from this DOM marker. Unknown or
 unavailable targets should be reported as unavailable rather than highlighted
 at old coordinates.
 
@@ -159,25 +171,25 @@ always means a new screen or a fresh mount.
 
 ## 4. Verify the actual release
 
-Keep a client-owned `docs/UI_REVIEWS.md` with the fixture command, scenarios,
+Keep a client-owned `docs/UI_REVIEWS.md` with live-review setup, supported screens,
 marker conventions, state version, unsupported surfaces and verification steps.
 Before calling the UI review-ready:
 
-1. Run the repository's CI, export its fixture, build its independent release,
+1. Run the repository's CI, build its independent release,
    and run `npx illustrata-check release` with representative product fixtures.
 2. In the platform review workspace, browse -> select a field -> comment ->
    change product/variant/state -> reopen the comment. Confirm the same target
    and original state return. Include controls with repeated labels and dialogs.
 3. Repeat at desktop, tablet and mobile widths. Changing viewport must preserve
-   the current synthetic state; reopening a comment must restore its viewport.
+   the current review state; reopening a comment must restore its viewport.
 4. Scroll continuously with the pointer over the preview, and separately over
    the comment rail. Check both directions, trackpad/wheel behavior, long result
    tables, bottom reachability, fit/zoom and resize while scrolled. The preview
    must not stall, jump backward or move the comment rail. Test nested scrollable
    controls without replacing their native scroll behavior.
 5. Confirm state restoration causes no calculation or save calls; ordinary
-   non-review delivery installs no review listeners. Verify all fixture data is
-   synthetic and auth/session-dependent screens are explicitly scoped.
+   non-review delivery installs no review listeners. Compare explicit live runs with ordinary tool calculations using the same
+   inputs/configuration. Verify password/expiry/revocation and supported access modes.
 6. Save screenshots and walkthrough evidence with the PR. Review links are for
    feedback, not production activation or release approval.
 
